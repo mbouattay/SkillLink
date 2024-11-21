@@ -1,0 +1,59 @@
+.logo{
+    color: aliceblue;
+    margin-top: 20px;
+    font-family: "Kanit";
+    font-size: 40px;
+}
+.links_container{
+    margin-top: 75px;
+}
+.iconLink{
+    margin-left: 30px;
+}
+.link{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 15px;
+    width: 240px;
+    height: 50px;
+    padding: 5px; 
+   
+}
+.linkSelected{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 15px;
+    width: 240px;
+    height: 50px;
+    padding: 5px;
+    background-color: #499ce6; 
+    cursor: pointer;
+    
+}
+.linkName{
+    font-size: 20px;
+    margin-bottom: 18px;
+    margin-left: 10px;
+    font-family: "Kanit";
+    color: #f0f8ff;
+    margin-top: 16px;
+    text-decoration: none;
+  
+}
+.deconnexionBtn{
+    width:155px;
+    height: 34px;
+    border-radius: 4px;
+    border: none;
+    margin-top: 150px;
+    background-color: #4daafa;
+    color: #f0f8ff;
+    font-family:"Kanit";
+    font-size: 16px;
+    cursor: pointer;
+    
+}
