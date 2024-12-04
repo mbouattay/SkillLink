@@ -10,13 +10,16 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon, Logout } from "@mui/icons-material";
 import { Home2, SearchNormal1, ClipboardText, Notification } from "iconsax-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const NavBarEntreprise = () => {
+    const navigate = useNavigate()
     const handleLogout = () => {
-        console.log("Déconnecté !");
+        localStorage.removeItem("persist:root");
+        navigate("/loginEnt");
+        navigate(0);
     };
-
+  
     return (
         <AppBar
             position="sticky"

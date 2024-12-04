@@ -17,6 +17,9 @@ import CondidateurEntreprise from './pages/condidateurEntreprise/condidateurEntr
 import RechercheProfile from './pages/rechercheProfile/rechercheProfile.jsx'
 import ListeOfferEmplois from './pages/listeOfferEmplois/listeOfferEmplois.jsx'
 import ModifierOffer from './pages/modifierOffer/modifierOffer.jsx'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+import LoginEntreprise from './pages/loginEntreprise/loginEntreprise.jsx'
 const ScrollToTop = ({ children }) => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -25,7 +28,7 @@ const ScrollToTop = ({ children }) => {
   return children;
 };
 function App() {
-
+  
   return (
     <>
       <BrowserRouter>
@@ -37,21 +40,20 @@ function App() {
           <Route path='/condidatures' element={<Condidatures/>}/>
           <Route path='/profile' element={<Profile/>}/>
           </Route>
-          <Route path='/quizzPage' element={<QuizPage/>}/>
+          <Route path='/quizzPage/:idoffer' element={<QuizPage/>}/>
           <Route path='/login' element={<Login/>}/>
+          <Route path='/loginEnt' element={<LoginEntreprise/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/home' element={<EntrepriseHome/>}/>
           <Route path='/ajouterOffer' element={<AjouterOffre/>}/>
-          <Route path='/ajouterQuizz' element={<AjouteQuizz/>}/>
+          <Route path='/ajouterQuizz/:idOffer' element={<AjouteQuizz/>}/>
           <Route path='/listeCondidatures' element={<CondidateurEntreprise/>}/>
           <Route path='/rechercheProfile' element={<RechercheProfile/>} />
           <Route path='/listOfferEmplois' element={<ListeOfferEmplois/>} />
-          <Route path='/modifierOffre/:id' element={<ModifierOffer/>} />
-
-         
-          
+          <Route path='/modifierOffre/:id' element={<ModifierOffer/>} /> 
         </Routes>
       </ScrollToTop>
+      <ToastContainer/>
       </BrowserRouter>
     </>
   )

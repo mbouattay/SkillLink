@@ -8,31 +8,35 @@ import {
     InputAdornment,
     IconButton,
 } from '@mui/material';
-import { Email, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Email, Lock, Visibility, VisibilityOff, Business } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginApi } from '../../service/loginApi';
 import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-const Login = () => {
-    const { connected,msg,user} = useSelector((state) => state.login);
-   
+import { LoginEntreprise as login }  from '../../service/loginEntreprise';
+
+const LoginEntreprise = () => {
+    const { connected, msg } = useSelector((state) => state.loginEntreprise);
+
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const dispatch = useDispatch();
+
     useEffect(() => {
-            if(connected==true){
-                navigate("/")
-            }
-            if(msg!=""){
-                toast.warn(msg,{ autoClose: 2000 });
-            }
-    }, [connected,msg]);
+        if (connected) {
+            navigate("/listOfferEmplois");
+        }
+        if (msg) {
+            toast.warn(msg, { autoClose: 2000 });
+        }
+    }, [connected, msg]);
+
     const handleTogglePassword = () => {
         setShowPassword(!showPassword);
     };
@@ -45,20 +49,14 @@ const Login = () => {
     const handleData = (e) => {
         e.preventDefault();
         if (!formData.email || !formData.password) {
-            toast.warn('Veuillez remplir tous les champs.',{ autoClose: 2000 });
+            toast.warn('Veuillez remplir tous les champs.', { autoClose: 2000 });
             return;
-        } else {
-            let data = {
-                "email": formData.email,
-                "password": formData.password
-
-            }
-            dispatch(loginApi(data))
-           
-          
         }
-        
-
+        const data = {
+            email: formData.email,
+            password: formData.password,
+        };
+        dispatch(login(data));
     };
 
     return (
@@ -67,13 +65,13 @@ const Login = () => {
             sx={{
                 mt: 8,
                 p: 4,
-                bgcolor: '#ffffff',
+                bgcolor: '#f7f7f7',
                 borderRadius: 3,
                 boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1)',
             }}
         >
             <Box textAlign="center" mb={3}>
-                <Typography
+            <Typography
                     variant="h4"
                     fontWeight="bold"
                     color="#499ce6"
@@ -81,8 +79,16 @@ const Login = () => {
                 >
                     SkillLink
                 </Typography>
+                <Typography
+                    variant="h4"
+                    fontWeight="bold"
+                    color="#2c3e50"
+                    gutterBottom
+                >
+                    Espace Entreprise
+                </Typography>
                 <Typography variant="subtitle1" color="textSecondary">
-                    Connectez-vous à votre compte
+                    Connectez-vous pour accéder à votre espace de gestion.
                 </Typography>
             </Box>
 
@@ -135,11 +141,12 @@ const Login = () => {
                     fullWidth
                     variant="contained"
                     sx={{
-                        bgcolor: '#499ce6',
+                        bgcolor: '#2c3e50',
+                        color: '#fff',
                         mt: 3,
                         py: 1.5,
                         '&:hover': {
-                            bgcolor: '#3a8ccc',
+                            bgcolor: '#34495e',
                         },
                     }}
                 >
@@ -147,13 +154,13 @@ const Login = () => {
                 </Button>
             </form>
 
-            <Box display="flex" justifyContent="space-between" mt={3} color="#499ce6">
+            <Box display="flex" justifyContent="space-between" mt={3} color="#2c3e50">
                 <Button href="#" color="inherit" sx={{ textTransform: 'none' }}>
                     Mot de passe oublié ?
                 </Button>
-                <Link to="/register">
-                    <Button color="inherit" sx={{ textTransform: 'none', color: '#499ce6' }}>
-                        Créer un compte
+                <Link to="/register-entreprise">
+                    <Button color="inherit" sx={{ textTransform: 'none', color: '#2c3e50' }}>
+                        Créer un compte entreprise
                     </Button>
                 </Link>
             </Box>
@@ -161,4 +168,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginEntreprise;

@@ -3,6 +3,7 @@ import { Briefcase, SmsSearch, Teacher, User } from 'iconsax-react';
 import React from 'react';
 import './saidbar.css';
 import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 const Saidbar = () => {
     var links = [
         {
@@ -28,6 +29,12 @@ const Saidbar = () => {
 
 
     ]
+    const navigate = useNavigate()
+    const Logout = () => {
+        localStorage.removeItem("persist:root");
+        navigate("/login");
+        navigate(0);
+      };
     return (
         <Box sx={{
             width: 250,
@@ -57,7 +64,7 @@ const Saidbar = () => {
                 ))}
 
             </div>
-            <button className='deconnexionBtn'>
+            <button className='deconnexionBtn' onClick={Logout}>
                 Déconnexion
             </button>
         </Box>

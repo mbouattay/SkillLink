@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
 import {
     Box,
     TextField,
@@ -14,10 +15,14 @@ import {
 } from "@mui/material";
 import NavBarEntreprise from "../../components/navBarEntreprise/navBarEntreprise";
 import { useNavigate, useParams } from "react-router-dom";
+import { AjouterOffer } from "../../service/ajouterOffer";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const ModifierOffer = () => {
-    const { id } = useParams(); 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+    const { idOffer } = useParams();
+    const {entreprise} = useSelector((state) => state.loginEntreprise);
     const [offerDetails, setOfferDetails] = useState({
         title: "",
         contractType: "",
@@ -28,11 +33,16 @@ const ModifierOffer = () => {
         requirements: "",
         skills: [],
     });
+    const skillsList = [
+        "HTML",
+        "CSS",
+        "JS",
+        "GITHUB",
+        "REACT",
+        "ANGULAR",
+    ];
 
-    const skillsList = ["JAVA", "PHP", "GIT", "GITHUB", "REACT", "ANGULAR"];
-
-
-  
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleGlzdCI6eyJfaWQiOiI2NzQ4ODU3YWJiZDA4ZjUwNTUyMmE0MzciLCJlbWFpbCI6ImJvdWF0dGF5bWFobW91ZDJAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkSjNUOHhkaWw3TlNiSTRTZjZ5SERKTzZoeTUzVGYwZUc0ZmxEOGNLTlhIRVREVjFVRTJHVDYiLCJyb2xlIjoiZW50cmVwcmlzZSIsImV0YXQiOnRydWUsImF2YXRhciI6Im51bGwiLCJub20iOiJwcm94eW0gIiwiZGVzY3JpcHRpb24iOiJhemVhZWF6ZWF6ZSIsImFkZHJlc3MiOiJydWUgMTIzIHNvdXNzZSIsInNpdGVXIjoid3d3LnNpdGV3ZWIuY29tIiwiQ29kZVBvc3RhbCI6IjUwNDEiLCJjcmVhdGVkQXQiOiIyMDI0LTExLTI4VDE1OjAwOjEwLjkyMFoiLCJ1cGRhdGVkQXQiOiIyMDI0LTExLTI4VDE1OjAxOjE1LjE0MVoiLCJfX3YiOjB9LCJpYXQiOjE3MzMwNTY5NjIsImV4cCI6MTczMzE0MzM2Mn0.aOnZCOQy3mZDrXACVWsdBZzXTjG21ADJrJ7lO6wzPTI";
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -47,8 +57,27 @@ const ModifierOffer = () => {
     };
 
     const handleSubmit = () => {
-        console.log("Offer Details Submitted:", offerDetails);
-        navigate("/"); 
+        const data = {
+            "description": offerDetails.description,
+             "titre": offerDetails.title,
+             "experience": offerDetails.experience,
+             "Contract": offerDetails.contractType,
+             "lieu": offerDetails.region,
+             "exigence": offerDetails.requirements,
+             "mession": offerDetails.missions,
+             "motCle": offerDetails.skills 
+        }
+        
+        ModifierOffer(idOffer,data,entreprise.token).then((response)=>{
+            console.log(response)
+           if(response.status==201){
+                toast.success("Votre offre bien modifier ", { autoClose: 1000 });
+               
+            }
+        })
+       
+       
+       
     };
 
     return (
@@ -64,6 +93,7 @@ const ModifierOffer = () => {
                     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
                 }}
             >
+
                 <Typography
                     variant="h4"
                     sx={{
@@ -73,10 +103,12 @@ const ModifierOffer = () => {
                         fontWeight: "bold",
                     }}
                 >
-                     Modifier Offre d’Emploi
+                    Modifier Offre d’Emploi
                 </Typography>
 
+
                 <form>
+
                     <TextField
                         label="Titre de l'Offre"
                         name="title"
@@ -86,6 +118,7 @@ const ModifierOffer = () => {
                         onChange={handleChange}
                         sx={{ marginBottom: "20px" }}
                     />
+
 
                     <FormControl fullWidth sx={{ marginBottom: "20px" }}>
                         <InputLabel>Type de Contrat</InputLabel>
@@ -114,6 +147,7 @@ const ModifierOffer = () => {
                         </Select>
                     </FormControl>
 
+
                     <TextField
                         label="Région"
                         name="region"
@@ -123,6 +157,7 @@ const ModifierOffer = () => {
                         onChange={handleChange}
                         sx={{ marginBottom: "20px" }}
                     />
+
 
                     <TextField
                         label="Description du Poste"
@@ -136,6 +171,7 @@ const ModifierOffer = () => {
                         sx={{ marginBottom: "20px" }}
                     />
 
+
                     <TextField
                         label="Vos Missions"
                         name="missions"
@@ -148,6 +184,7 @@ const ModifierOffer = () => {
                         sx={{ marginBottom: "20px" }}
                     />
 
+
                     <TextField
                         label="Exigences du Poste"
                         name="requirements"
@@ -159,7 +196,6 @@ const ModifierOffer = () => {
                         onChange={handleChange}
                         sx={{ marginBottom: "20px" }}
                     />
-
                     <Typography
                         variant="h6"
                         sx={{ marginBottom: "10px", color: "#333", fontWeight: "500" }}
@@ -194,14 +230,14 @@ const ModifierOffer = () => {
                             fontWeight: "bold",
                         }}
                     >
-                        { "Modifier l'Offre" }
+                       Modifier Offer
                     </Button>
                 </form>
             </Box>
         </div>
+
     );
 };
 
 export default ModifierOffer;
-
 

@@ -15,12 +15,18 @@ import {
 } from "@mui/material";
 import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
 import NavBarEntreprise from "../../components/navBarEntreprise/navBarEntreprise";
+import { useNavigate, useParams } from "react-router-dom";
+import { AjouterQuizz } from "../../service/ajouterQuizz";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const AjouteQuizz = () => {
   const [questions, setQuestions] = useState([
     { questionText: "", answers: ["", ""], correctAnswerIndex: 0 },
   ]);
-
+  const { idOffer } = useParams();
+  const navigate = useNavigate()
+  const {entreprise} = useSelector((state) => state.loginEntreprise);
   const handleQuestionChange = (index, value) => {
     const updatedQuestions = [...questions];
     updatedQuestions[index].questionText = value;
@@ -54,7 +60,7 @@ const AjouteQuizz = () => {
   const handleAddQuestion = () => {
     setQuestions([
       ...questions,
-      { questionText: "", answers: ["", ""], correctAnswerIndex: 0 },
+      { questionText: "", answers: [], correctAnswerIndex: 0 },
     ]);
   };
 
@@ -63,11 +69,24 @@ const AjouteQuizz = () => {
     updatedQuestions.splice(qIndex, 1);
     setQuestions(updatedQuestions);
   };
-
   const handleSubmit = () => {
-    console.log("Quiz Data Submitted:", questions);
-    alert("Quiz ajouté avec succès !");
+    const formattedQuestions = questions.map((q) => ({
+      titre: q.questionText,
+      offer: idOffer,
+      reponses: q.answers.map((answer, index) => ({
+        reponseText: answer,
+        isCorrect: index === q.correctAnswerIndex,
+      })),
+    }));
+    let data = {questions:formattedQuestions}
+    AjouterQuizz(data,entreprise.token).then((response) =>{
+      if(response.status==201){
+        toast.success("Quizz bien ajoute ", { autoClose: 1000 });
+        navigate("/listOfferEmplois"); 
+    }
+    })
   };
+
 
   return (
     <div>
@@ -201,7 +220,7 @@ const AjouteQuizz = () => {
                 ))}
               </RadioGroup>
 
-            
+
               <Button
                 onClick={() => handleRemoveQuestion(qIndex)}
                 color="error"
@@ -250,7 +269,7 @@ const AjouteQuizz = () => {
             "&:hover": { backgroundColor: "#377dbf" },
           }}
         >
-          Enregistrer 
+          Enregistrer
         </Button>
       </Box>
     </div>

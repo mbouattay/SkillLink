@@ -14,9 +14,13 @@ import {
 } from "@mui/material";
 import NavBarEntreprise from "../../components/navBarEntreprise/navBarEntreprise";
 import { useNavigate } from "react-router-dom";
+import { AjouterOffer } from "../../service/ajouterOffer";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const AjouterOffre = () => {
-    const navigate=useNavigate()
+    const navigate = useNavigate()
+    const {entreprise} = useSelector((state) => state.loginEntreprise);
     const [offerDetails, setOfferDetails] = useState({
         title: "",
         contractType: "",
@@ -27,16 +31,15 @@ const AjouterOffre = () => {
         requirements: "",
         skills: [],
     });
-
     const skillsList = [
-        "JAVA",
-        "PHP",
-        "GIT",
+        "HTML",
+        "CSS",
+        "JS",
         "GITHUB",
         "REACT",
         "ANGULAR",
     ];
-
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setOfferDetails({ ...offerDetails, [name]: value });
@@ -50,13 +53,28 @@ const AjouterOffre = () => {
     };
 
     const handleSubmit = () => {
-        console.log("Offer Details Submitted:", offerDetails);
-        navigate("/ajouterQuizz")
+        const data = {
+            "description": offerDetails.description,
+             "titre": offerDetails.title,
+             "experience": offerDetails.experience,
+             "Contract": offerDetails.contractType,
+             "lieu": offerDetails.region,
+             "exigence": offerDetails.requirements,
+             "mession": offerDetails.missions,
+             "motCle": offerDetails.skills 
+        }
+        AjouterOffer(data,entreprise.token).then((response)=>{
+            if(response.status==201){
+                toast.success("Votre offre bien ajoute ", { autoClose: 1000 });
+                navigate("/ajouterQuizz/"+response.data.offer._id)
+            }
+        })
+       
     };
 
     return (
         <div>
-            <NavBarEntreprise/>
+            <NavBarEntreprise />
             <Box
                 sx={{
                     maxWidth: "800px",
@@ -80,9 +98,9 @@ const AjouterOffre = () => {
                     Ajouter une Offre d’Emploi
                 </Typography>
 
-   
+
                 <form>
-                 
+
                     <TextField
                         label="Titre de l'Offre"
                         name="title"
@@ -93,7 +111,7 @@ const AjouterOffre = () => {
                         sx={{ marginBottom: "20px" }}
                     />
 
-                    
+
                     <FormControl fullWidth sx={{ marginBottom: "20px" }}>
                         <InputLabel>Type de Contrat</InputLabel>
                         <Select
@@ -121,7 +139,7 @@ const AjouterOffre = () => {
                         </Select>
                     </FormControl>
 
-           
+
                     <TextField
                         label="Région"
                         name="region"
@@ -132,7 +150,7 @@ const AjouterOffre = () => {
                         sx={{ marginBottom: "20px" }}
                     />
 
-                 
+
                     <TextField
                         label="Description du Poste"
                         name="description"
@@ -145,7 +163,7 @@ const AjouterOffre = () => {
                         sx={{ marginBottom: "20px" }}
                     />
 
-                  
+
                     <TextField
                         label="Vos Missions"
                         name="missions"
@@ -158,7 +176,7 @@ const AjouterOffre = () => {
                         sx={{ marginBottom: "20px" }}
                     />
 
-                  
+
                     <TextField
                         label="Exigences du Poste"
                         name="requirements"

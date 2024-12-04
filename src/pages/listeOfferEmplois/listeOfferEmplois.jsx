@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Box,
     Typography,
@@ -16,59 +16,41 @@ import {
     DialogActions,
     DialogContent,
 } from "@mui/material";
-import { Add, Edit2, Trash, Eye, EyeSlash } from "iconsax-react"; 
+import { Add, Edit2, Trash, Eye, EyeSlash } from "iconsax-react";
 import NavBarEntreprise from "../../components/navBarEntreprise/navBarEntreprise";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
-const offersData = [
-    {
-        id: 1,
-        title: "Développeur Full Stack",
-        description: "Nous recherchons un développeur expérimenté en React et Node.js.",
-        status: "Publiée",
-        visible: true, 
-    },
-    {
-        id: 2,
-        title: "Data Scientist",
-        description: "Un expert en données pour des projets d'IA.",
-        status: "Brouillon",
-        visible: true,
-    },
-    {
-        id: 3,
-        title: "Designer UI/UX",
-        description: "Un designer créatif avec une maîtrise de Figma et Adobe XD.",
-        status: "Publiée",
-        visible: true,
-    },
-];
+import { Link, useNavigate } from "react-router-dom";
+import { allOfferEntreprise } from "../../service/allOfferEntreprise";
+import { SupprimerOffer } from "../../service/supprimerOffer";
+import { useSelector } from "react-redux";
 
 const ListeOfferEmplois = () => {
-    const [offers, setOffers] = useState(offersData);
+    const [offers, setOffers] = useState([]);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [offerToDelete, setOfferToDelete] = useState(null);
-    const navigate = useNavigate(); 
-
+    const [IDofferToDelete, setIDOfferToDelete] = useState(null);
+    const [ref, setref] = useState(0);
+    const navigate = useNavigate();
+    const {entreprise} = useSelector((state) => state.loginEntreprise);
     const handleDeleteOffer = () => {
-        setOffers(offers.filter((offer) => offer.id !== offerToDelete.id));
-        setOpenDeleteDialog(false);
+        const data={id:IDofferToDelete}
+        SupprimerOffer(data,entreprise.token).then((response)=>{
+            console.log(response)
+        })
+        setref(ref+1)
+        
     };
-
-
-    const toggleVisibility = (id) => {
-        setOffers((prevOffers) =>
-            prevOffers.map((offer) =>
-                offer.id === id ? { ...offer, visible: !offer.visible } : offer
-            )
-        );
-    };
-
+ 
+   
 
     const handleEditOffer = (id) => {
-        navigate(`/modifierOffre/${id}`); 
+        navigate(`/modifierOffre/${id}`);
     };
+
+    useEffect(() => {
+        allOfferEntreprise(entreprise.token).then((response) => {
+            setOffers(response.data.result);
+        });
+    }, [ref]);
 
     return (
         <div>
@@ -105,43 +87,46 @@ const ListeOfferEmplois = () => {
                                 <TableCell sx={{ fontWeight: "bold" }}>Titre</TableCell>
                                 <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
                                 <TableCell sx={{ fontWeight: "bold" }}>Statut</TableCell>
-                                <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
+                                <TableCell sx={{ fontWeight: "bold", width: "200px" }}>
+                                    Actions
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {offers.map((offer) => (
-                                <TableRow key={offer.id}>
-                                    <TableCell>{offer.title}</TableCell>
+                            {offers?.map((offer) => (
+                                <TableRow key={offer._id}>
+                                    <TableCell>{offer.titre}</TableCell>
                                     <TableCell>{offer.description}</TableCell>
                                     <TableCell
                                         sx={{
-                                            color: offer.status === "Publiée" ? "green" : "orange",
+                                            color: offer.Status ? "green" : "orange",
                                             fontWeight: "bold",
                                         }}
                                     >
-                                        {offer.status}
+                                        {offer.Status ? "Publiée" : "Brouillon"}
                                     </TableCell>
                                     <TableCell>
                                         <IconButton
                                             color="primary"
-                                            onClick={() => handleEditOffer(offer.id)} 
+                                            onClick={() => handleEditOffer(offer._id)}
                                         >
                                             <Edit2 />
                                         </IconButton>
                                         <IconButton
                                             color="error"
                                             onClick={() => {
-                                                setOfferToDelete(offer);
+                                                setOfferToDelete(offer.titre);
+                                                setIDOfferToDelete(offer._id)
                                                 setOpenDeleteDialog(true);
                                             }}
                                         >
                                             <Trash />
                                         </IconButton>
                                         <IconButton
-                                            color={offer.visible ? "secondary" : "default"}
-                                            onClick={() => toggleVisibility(offer.id)}
+                                            color={offer.Status ? "secondary" : "default"}
+                                            onClick={() => toggleVisibility(offer._id)}
                                         >
-                                            {offer.visible ? <Eye /> : <EyeSlash />}
+                                            {offer.Status ? <Eye /> : <EyeSlash />}
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>
@@ -163,7 +148,7 @@ const ListeOfferEmplois = () => {
                 >
                     <DialogTitle
                         sx={{
-                            textAlign: "center", 
+                            textAlign: "center",
                             fontSize: "20px",
                             fontWeight: "bold",
                             color: "#D32F2F",
@@ -173,15 +158,10 @@ const ListeOfferEmplois = () => {
                             gap: "10px",
                         }}
                     >
-                        <Trash size="40" color="#D32F2F" /> 
+                        <Trash size="40" color="#D32F2F" />
                         Confirmer la suppression
                     </DialogTitle>
-                    <DialogContent
-                        sx={{
-                            textAlign: "center",
-                            marginTop: "10px",
-                        }}
-                    >
+                    <DialogContent sx={{ textAlign: "center", marginTop: "10px" }}>
                         <Typography
                             sx={{
                                 fontSize: "16px",
@@ -198,11 +178,12 @@ const ListeOfferEmplois = () => {
                                     marginLeft: "5px",
                                 }}
                             >
-                                "{offerToDelete?.title}" ?
+                                "{offerToDelete}" ?
                             </Typography>
                         </Typography>
                         <Typography sx={{ fontSize: "14px", color: "#777" }}>
-                            Cette action est irréversible. Vous ne pourrez pas récupérer cette offre.
+                            Cette action est irréversible. Vous ne pourrez pas récupérer cette
+                            offre.
                         </Typography>
                     </DialogContent>
                     <DialogActions
@@ -220,10 +201,10 @@ const ListeOfferEmplois = () => {
                                 borderRadius: "10px",
                                 color: "#555",
                                 borderColor: "#ccc",
-                                padding: "10px 20px", 
+                                padding: "10px 20px",
                                 "&:hover": {
                                     borderColor: "#aaa",
-                                    backgroundColor: "#f9f9f9", 
+                                    backgroundColor: "#f9f9f9",
                                 },
                             }}
                         >
@@ -248,8 +229,6 @@ const ListeOfferEmplois = () => {
                         </Button>
                     </DialogActions>
                 </Dialog>
-
-
             </Box>
         </div>
     );

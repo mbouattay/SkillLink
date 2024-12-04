@@ -1,9 +1,11 @@
-import { FormControl, IconButton, InputAdornment, OutlinedInput } from '@mui/material';
+import { Avatar, FormControl, IconButton, InputAdornment, OutlinedInput } from '@mui/material';
 import { Notification, SearchNormal } from 'iconsax-react';
 import React from 'react';
 import img1 from "../../assets/userProfile.jpg"
 import "./navBar.css"
+import { useSelector } from 'react-redux';
 const NavBar = () => {
+    const { user } = useSelector((state) => state.login);
     return (
              <nav className='navBar'>
                     <FormControl sx={{ m: 4, width: '480px' }} variant="outlined">
@@ -32,7 +34,12 @@ const NavBar = () => {
                             <div className='redicon'>3</div>
                         </div>
                         <div className='userProfile'>
-                            <img src={img1} alt='profile' />
+                        <Avatar
+                            src={"http://127.0.0.1:3500/"+user?.avatar}
+                            alt="Photo de profil"
+                            sx={{ width: 50, height: 50 , cursor: 'pointer' }}
+                        />
+                           
                             <div className='active'></div>
                         </div>
 

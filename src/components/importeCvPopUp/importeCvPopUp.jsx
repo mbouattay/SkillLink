@@ -13,28 +13,40 @@ import {
   Avatar,
 } from '@mui/material';
 import { UploadFile, Close, CloudUpload } from '@mui/icons-material';
+import { uploadCV } from '../../service/uploadCV';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProfilData } from '../../service/getProfilData';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const ImporteCvPopUp = ({ open, handleClose }) => {
+  const { user } = useSelector((state) => state.login);
   const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFileChange = (e) => {
+  const dispatch = useDispatch();
+  const handleFileChange = (e) =>{
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
     }
   };
-
-  const handleUpload = () => {
+  const handleUpload =async () => { 
     if (selectedFile) {
-      console.log('CV téléchargé:', selectedFile);
-      handleClose();
-    }
+      const formData = new FormData();
+      formData.append('pdf', selectedFile);
+      try {
+          await uploadCV(user.token, formData);
+          toast.success("CV importé avec succès", { autoClose: 1000 });
+          dispatch(getProfilData(user.token));
+          handleClose();
+      } catch (error) {
+          console.error('Erreur lors de l\'importation du CV:', error);
+          toast.error("Échec de l'importation du CV", { autoClose: 1000 });
+      }
+  }
   };
-
   return (
     <Dialog
       open={open}
