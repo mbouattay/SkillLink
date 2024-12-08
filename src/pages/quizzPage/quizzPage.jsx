@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   Typography,
@@ -12,10 +12,27 @@ import {
   Divider,
 } from '@mui/material';
 import QuizIcon from '@mui/icons-material/Quiz';
+import { getQuizz } from '../../service/getQuizz';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { QuizzResultat } from '../../service/QuizzResultat';
 
 const QuizPage = () => {
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [Quizz, setQuizz] = useState([]);
+  const { user } = useSelector((state) => state.login);
+  const { idoffer } = useParams();
+  const navigate = useNavigate()
+  useEffect(() => {
+    getQuizz(idoffer, user.token).then((response) => {
+      console.log(response.data.resault)
+      setQuizz(response.data.resault); 
+      setTotalQuestions(response.data.resault.length); 
+    });
+  }, []);
 
   const handleChange = (event) => {
     setAnswers({ ...answers, [event.target.name]: event.target.value });
@@ -23,9 +40,31 @@ const QuizPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    let correctAnswers = 0;
+    Quizz.forEach((question) => {
+      const correctOption = question.reponses.find((reponse) => reponse.isCorrect);
+      if (correctOption && answers[question._id] === correctOption.reponseText) {
+        correctAnswers++;
+      }
+    });
     setSubmitted(true);
-    alert('Merci d\'avoir complété le quiz !');
+    let data={
+      offer:idoffer,
+      Employe:user.id,
+      score:(correctAnswers / totalQuestions)*100 
+    }
+      QuizzResultat(data).then((response)=>{
+        console.log(response)
+        if(response.data.success==false){
+          toast.warn("Application rejected", { autoClose: 1000 });
+          navigate("/"); 
+        }else{
+          toast.success("Application accepted successfully", { autoClose: 1000 });
+          navigate("/");
+        }
+      })
   };
+
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
@@ -40,30 +79,39 @@ const QuizPage = () => {
         </Typography>
         <Divider sx={{ my: 3 }} />
         <form onSubmit={handleSubmit}>
-          <FormControl component="fieldset" sx={{ mb: 3 }}>
-            <Typography variant="h6">1. Quelle est votre expérience avec JavaScript ?</Typography>
-            <RadioGroup name="q1" onChange={handleChange}>
-              <FormControlLabel value="Débutant" control={<Radio />} label="Débutant" />
-              <FormControlLabel value="Intermédiaire" control={<Radio />} label="Intermédiaire" />
-              <FormControlLabel value="Avancé" control={<Radio />} label="Avancé" />
-            </RadioGroup>
-          </FormControl>
-          <FormControl component="fieldset" sx={{ mb: 3 }}>
-            <Typography variant="h6">2. Quelle est la commande pour initialiser un projet Git ?</Typography>
-            <RadioGroup name="q2" onChange={handleChange}>
-              <FormControlLabel value="git init" control={<Radio />} label="git init" />
-              <FormControlLabel value="git start" control={<Radio />} label="git start" />
-              <FormControlLabel value="git create" control={<Radio />} label="git create" />
-            </RadioGroup>
-          </FormControl>
-          <FormControl component="fieldset" sx={{ mb: 3 }}>
-            <Typography variant="h6">3. Lequel des éléments suivants est une bibliothèque JavaScript ?</Typography>
-            <RadioGroup name="q3" onChange={handleChange}>
-              <FormControlLabel value="Angular" control={<Radio />} label="Angular" />
-              <FormControlLabel value="React" control={<Radio />} label="React" />
-              <FormControlLabel value="Vue" control={<Radio />} label="Vue" />
-            </RadioGroup>
-          </FormControl>
+          <Box display="flex" flexDirection="row" flexWrap="wrap" gap={2}>
+            {Quizz.map((question, index) => (
+              <Box
+                key={question._id}
+                flex="1 1 45%"
+                sx={{
+                  minWidth: '300px',
+                  p: 2,
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 2,
+                  backgroundColor: '#f9f9f9',
+                }}
+              >
+                <FormControl component="fieldset" sx={{ mb: 2 }}>
+                  <Typography variant="h6">{index + 1}. {question.titre}</Typography>
+                  <RadioGroup
+                    name={question._id}
+                    onChange={handleChange}
+                    value={answers[question._id] || ''}
+                  >
+                    {question.reponses.map((reponse) => (
+                      <FormControlLabel
+                        key={reponse._id}
+                        value={reponse.reponseText}
+                        control={<Radio />}
+                        label={reponse.reponseText}
+                      />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+            ))}
+          </Box>
           <Box display="flex" justifyContent="center" mt={4}>
             <Button
               type="submit"

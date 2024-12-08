@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -17,6 +17,8 @@ import {
 import { CheckCircle, Cancel, Visibility } from "@mui/icons-material";
 import NavBarEntreprise from "../../components/navBarEntreprise/navBarEntreprise";
 import img1 from "../../assets/userProfile.jpg"
+import { useDispatch, useSelector } from "react-redux";
+import { getCondidatureEntreprise } from "../../service/getCondidatureEntreprise";
 
 const candidatsData = [
   {
@@ -79,6 +81,13 @@ const candidatsData = [
 
 const CondidateurEntreprise = () => {
   const [candidats, setCandidats] = useState(candidatsData);
+  
+  const {entreprise} = useSelector((state) => state.loginEntreprise);
+  const {condidatureEnt} = useSelector((state) => state.condidatureEntreprise);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getCondidatureEntreprise(entreprise.token))
+  }, [dispatch]);
   const handleAccept = (id) => {
    
     alert("Candidat accepté !");
@@ -87,7 +96,7 @@ const CondidateurEntreprise = () => {
   const handleReject = (id) => {
     alert("Candidat refusé !");
   };
-
+  console.log(condidatureEnt)
   return (
     <div>
       <NavBarEntreprise />
@@ -124,21 +133,21 @@ const CondidateurEntreprise = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {candidats.map((candidat) => (
-                <TableRow key={candidat.id}>
+              {condidatureEnt.map((candidat,i) => (
+                <TableRow key={candidat._id}>
                   <TableCell align="center">
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Avatar src={img1} alt={candidat.name} sx={{ width: 40, height: 40, marginRight: 2 }} />
-                      <Typography variant="body1">{candidat.name}</Typography>
+                      <Avatar src={"http://127.0.0.1:3500/"+candidat?.resultats?.[0].Employe.avatar} alt={candidat.name} sx={{ width: 40, height: 40, marginRight: 2 }} />
+                      <Typography variant="body1">{candidat?.resultats?.[0].Employe.prenom} {candidat?.resultats?.[0].Employe.nom}</Typography>
                     </Box>
                   </TableCell>
-                  <TableCell align="center">{candidat.offerTitle}</TableCell>
-                  <TableCell align="center">{candidat.score}%</TableCell>
+                  <TableCell align="center">{candidat.titre}</TableCell>
+                  <TableCell align="center">{candidat?.resultats?.[0].score}%</TableCell>
                   <TableCell align="center">
                     <Tooltip title="Voir le CV">
                       <IconButton
                         color="primary"
-                        href={candidat.cvLink}
+                        href={"http://127.0.0.1:3500/"+candidat?.resultats?.[0].Employe?.Cv[0]?.pdf}
                         target="_blank"
                         sx={{
                           backgroundColor: "#e3f2fd",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Container,
     Typography,
@@ -22,6 +22,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import BusinessIcon from '@mui/icons-material/Business';
 import NavBar from '../../components/navBar/navBar';
 import './condidatures.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCondidature } from '../../service/getCondidature';
 
 const initialApplications = [
     { id: 1, company: 'Google', jobTitle: 'Développeur Front-End', status: 'Accepté' },
@@ -33,13 +35,9 @@ const initialApplications = [
 
 const Condidatures = () => {
     const [searchTerm, setSearchTerm] = useState('');
-
-    const filteredApplications = initialApplications.filter(
-        (application) =>
-            application.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            application.jobTitle.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
+    const { user } = useSelector((state) => state.login);
+    const { condidature } = useSelector((state) => state.condidature);
+    console.log("azeaze",condidature)
     const getStatusChip = (status) => {
         switch (status) {
             case 'Accepté':
@@ -51,11 +49,11 @@ const Condidatures = () => {
                         sx={{ fontWeight: 'bold', backgroundColor: '#d4edda', color: '#155724' }}
                     />
                 );
-            case 'En attente':
+            case 'en attend':
                 return (
                     <Chip
                         icon={<HourglassEmptyIcon />}
-                        label="En attente"
+                        label="En attend"
                         color="warning"
                         sx={{ fontWeight: 'bold', backgroundColor: '#fff3cd', color: '#856404' }}
                     />
@@ -73,6 +71,10 @@ const Condidatures = () => {
                 return <Chip label="Inconnu" />;
         }
     };
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getCondidature(user.token))
+    }, [dispatch]);
 
     return (
         <div className='CondidaturesContainer'>
@@ -116,7 +118,7 @@ const Condidatures = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {filteredApplications.map((application) => (
+                                    {condidature.map((application) => (
                                         <TableRow
                                             key={application.id}
                                             hover
@@ -130,11 +132,11 @@ const Condidatures = () => {
                                                     <Avatar sx={{ bgcolor: '#499ce6' }}>
                                                         <BusinessIcon />
                                                     </Avatar>
-                                                    <Typography variant="body1">{application.company}</Typography>
+                                                    <Typography variant="body1">{application.offer.Enterprise.nom}</Typography>
                                                 </Stack>
                                             </TableCell>
-                                            <TableCell>{application.jobTitle}</TableCell>
-                                            <TableCell align="center">{getStatusChip(application.status)}</TableCell>
+                                            <TableCell>{application.offer.titre}</TableCell>
+                                            <TableCell align="center">{getStatusChip(application.etat)}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

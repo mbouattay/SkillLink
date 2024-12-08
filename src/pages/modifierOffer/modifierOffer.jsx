@@ -15,13 +15,13 @@ import {
 } from "@mui/material";
 import NavBarEntreprise from "../../components/navBarEntreprise/navBarEntreprise";
 import { useNavigate, useParams } from "react-router-dom";
-import { AjouterOffer } from "../../service/ajouterOffer";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { ModifierOfferApi } from "../../service/modifierOffer";
 
 const ModifierOffer = () => {
     const navigate = useNavigate()
-    const { idOffer } = useParams();
+    const { id } = useParams();
     const {entreprise} = useSelector((state) => state.loginEntreprise);
     const [offerDetails, setOfferDetails] = useState({
         title: "",
@@ -31,7 +31,7 @@ const ModifierOffer = () => {
         description: "",
         missions: "",
         requirements: "",
-        skills: [],
+        skills:[],
     });
     const skillsList = [
         "HTML",
@@ -41,8 +41,6 @@ const ModifierOffer = () => {
         "REACT",
         "ANGULAR",
     ];
-
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleGlzdCI6eyJfaWQiOiI2NzQ4ODU3YWJiZDA4ZjUwNTUyMmE0MzciLCJlbWFpbCI6ImJvdWF0dGF5bWFobW91ZDJAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkSjNUOHhkaWw3TlNiSTRTZjZ5SERKTzZoeTUzVGYwZUc0ZmxEOGNLTlhIRVREVjFVRTJHVDYiLCJyb2xlIjoiZW50cmVwcmlzZSIsImV0YXQiOnRydWUsImF2YXRhciI6Im51bGwiLCJub20iOiJwcm94eW0gIiwiZGVzY3JpcHRpb24iOiJhemVhZWF6ZWF6ZSIsImFkZHJlc3MiOiJydWUgMTIzIHNvdXNzZSIsInNpdGVXIjoid3d3LnNpdGV3ZWIuY29tIiwiQ29kZVBvc3RhbCI6IjUwNDEiLCJjcmVhdGVkQXQiOiIyMDI0LTExLTI4VDE1OjAwOjEwLjkyMFoiLCJ1cGRhdGVkQXQiOiIyMDI0LTExLTI4VDE1OjAxOjE1LjE0MVoiLCJfX3YiOjB9LCJpYXQiOjE3MzMwNTY5NjIsImV4cCI6MTczMzE0MzM2Mn0.aOnZCOQy3mZDrXACVWsdBZzXTjG21ADJrJ7lO6wzPTI";
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -67,12 +65,11 @@ const ModifierOffer = () => {
              "mession": offerDetails.missions,
              "motCle": offerDetails.skills 
         }
-        
-        ModifierOffer(idOffer,data,entreprise.token).then((response)=>{
+        ModifierOfferApi(id,data,entreprise.token).then((response)=>{
             console.log(response)
-           if(response.status==201){
+           if(response.status==200){
                 toast.success("Votre offre bien modifier ", { autoClose: 1000 });
-               
+                navigate("/listOfferEmplois")
             }
         })
        
