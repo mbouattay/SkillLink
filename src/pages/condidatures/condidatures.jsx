@@ -118,7 +118,7 @@ const Condidatures = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {condidature.map((application) => (
+                                    {condidature?.map((application) => (
                                         <TableRow
                                             key={application.id}
                                             hover
