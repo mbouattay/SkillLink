@@ -132,10 +132,10 @@ const Condidatures = () => {
                                                     <Avatar sx={{ bgcolor: '#499ce6' }}>
                                                         <BusinessIcon />
                                                     </Avatar>
-                                                    <Typography variant="body1">{application.offer.Enterprise.nom}</Typography>
+                                                    <Typography variant="body1">{application.offer?.Enterprise?.nom}</Typography>
                                                 </Stack>
                                             </TableCell>
-                                            <TableCell>{application.offer.titre}</TableCell>
+                                            <TableCell>{application?.offer?.titre}</TableCell>
                                             <TableCell align="center">{getStatusChip(application.etat)}</TableCell>
                                         </TableRow>
                                     ))}

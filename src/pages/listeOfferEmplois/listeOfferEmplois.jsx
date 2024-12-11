@@ -21,6 +21,7 @@ import NavBarEntreprise from "../../components/navBarEntreprise/navBarEntreprise
 import { Link, useNavigate } from "react-router-dom";
 import { allOfferEntreprise } from "../../service/allOfferEntreprise";
 import { SupprimerOffer } from "../../service/supprimerOffer";
+import { ChangeStatus } from "../../service/changeStatus";
 import { useSelector } from "react-redux";
 
 const ListeOfferEmplois = () => {
@@ -30,20 +31,26 @@ const ListeOfferEmplois = () => {
     const [IDofferToDelete, setIDOfferToDelete] = useState(null);
     const [ref, setref] = useState(0);
     const navigate = useNavigate();
-    const {entreprise} = useSelector((state) => state.loginEntreprise);
+    const { entreprise } = useSelector((state) => state.loginEntreprise);
+
     const handleDeleteOffer = () => {
-        const data={id:IDofferToDelete}
-        SupprimerOffer(data,entreprise.token).then((response)=>{
-            console.log(response)
-        })
-        setref(ref+1)
-        
+        const data = { id: IDofferToDelete };
+        SupprimerOffer(data, entreprise.token).then(() => {
+            setOpenDeleteDialog(false);
+        });
+        setref(ref + 1);
     };
- 
-   
 
     const handleEditOffer = (id) => {
         navigate(`/modifierOffre/${id}`);
+    };
+
+    const toggleVisibility = (id) => {
+       
+        const data = {OfferId:id };
+        ChangeStatus(data,entreprise.token).then(() => {
+            setref(ref + 1); // Re-fetch the data
+        });
     };
 
     useEffect(() => {
@@ -116,7 +123,7 @@ const ListeOfferEmplois = () => {
                                             color="error"
                                             onClick={() => {
                                                 setOfferToDelete(offer.titre);
-                                                setIDOfferToDelete(offer._id)
+                                                setIDOfferToDelete(offer._id);
                                                 setOpenDeleteDialog(true);
                                             }}
                                         >
@@ -124,7 +131,7 @@ const ListeOfferEmplois = () => {
                                         </IconButton>
                                         <IconButton
                                             color={offer.Status ? "secondary" : "default"}
-                                            onClick={() => toggleVisibility(offer._id)}
+                                            onClick={() => toggleVisibility(offer._id, offer.Status)}
                                         >
                                             {offer.Status ? <Eye /> : <EyeSlash />}
                                         </IconButton>

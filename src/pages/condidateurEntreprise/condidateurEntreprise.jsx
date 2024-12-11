@@ -138,7 +138,7 @@ const CondidateurEntreprise = () => {
                       <Typography variant="body1">{candidat.Employe.prenom} {candidat.Employe.nom}</Typography>
                     </Box>
                   </TableCell>
-                  <TableCell align="center">{candidat.offer.titre}</TableCell>
+                  <TableCell align="center">{candidat.offer?.titre}</TableCell>
                   <TableCell align="center">{candidat?.score}%</TableCell>
                   <TableCell align="center">{getStatusChip(candidat.etat)}</TableCell>
                   <TableCell align="center">
