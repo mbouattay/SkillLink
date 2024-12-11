@@ -158,7 +158,7 @@ const LoginEntreprise = () => {
                 <Button href="#" color="inherit" sx={{ textTransform: 'none' }}>
                     Mot de passe oublié ?
                 </Button>
-                <Link to="/register-entreprise">
+                <Link to="/registerEnt">
                     <Button color="inherit" sx={{ textTransform: 'none', color: '#2c3e50' }}>
                         Créer un compte entreprise
                     </Button>

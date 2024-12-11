@@ -7,77 +7,76 @@ import {
   Typography,
   InputAdornment,
   IconButton,
-  Grid,
 } from '@mui/material';
-import { Email, Lock, Person, Work, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Email, Lock, Business, LocationOn, Public, PostAdd, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { register } from '../../service/registerApi';
-import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { registerEntreprise } from '../../service/registerEntreprise';
 
-const Register = () => {
+const RegisterEntreprise = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    jobTitle: '',
+    nom: '',
+    description: '',
+    address: '',
+    siteWeb: '',
+    CodePostal: '',
   });
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleTogglePassword = () => setShowPassword(!showPassword);
-  const handleToggleConfirmPassword = () =>
-    setShowConfirmPassword(!showConfirmPassword);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     const isFormComplete = Object.values(formData).every((value) => value.trim() !== '');
-  
+
     if (!isFormComplete) {
       toast.warn("Tous les champs doivent être remplis !", { autoClose: 1000 });
       return;
     }
-  
+
     if (formData.password !== formData.confirmPassword) {
-      toast.warn("Les mots de passe ne correspondent pas !", { autoClose: 1000 });
+      toast.error("Les mots de passe ne correspondent pas !", { autoClose: 2000 });
       return;
     }
+
     let data = {
       email: formData.email,
       password: formData.password,
-      nom: formData.firstName,
-      prenom: formData.lastName,
-      posteT: formData.jobTitle,
+      nom: formData.nom,
+      description: formData.description,
+      address: formData.address,
+      siteWeb: formData.siteWeb,
+      CodePostal: formData.CodePostal,
     };
-    console.log(data)
-    register(data)
+
+    registerEntreprise(data)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Veuillez vérifier votre boîte e-mail !", { autoClose: 1000 });
-          navigate("/login");
+          toast.success("Inscription réussie, veuillez vérifier votre boîte e-mail !", { autoClose: 1000 });
+          navigate("/loginEnt");
           return;
         }
       })
       .catch((error) => {
         if (axios.isAxiosError(error) && error.response) {
-        
           toast.error("Email déjà existant !", { autoClose: 2000 });
         } else {
           toast.error("Une erreur inattendue est survenue. Veuillez réessayer.", { autoClose: 2000 });
-         
         }
       });
   };
-  
 
   return (
     <Container
@@ -95,46 +94,26 @@ const Register = () => {
           SkillLink
         </Typography>
         <Typography variant="subtitle1" color="textSecondary">
-          Créez votre compte
+          Inscrivez votre entreprise
         </Typography>
       </Box>
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Prénom"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Person color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Nom"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Person color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-        </Grid>
+        <TextField
+          label="Nom de l'entreprise"
+          name="nom"
+          value={formData.nom}
+          onChange={handleChange}
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Business color="primary" />
+              </InputAdornment>
+            ),
+          }}
+        />
 
         <TextField
           label="Adresse Email"
@@ -182,7 +161,7 @@ const Register = () => {
         <TextField
           label="Confirmer le Mot de Passe"
           name="confirmPassword"
-          type={showConfirmPassword ? 'text' : 'password'}
+          type={showPassword ? 'text' : 'password'}
           value={formData.confirmPassword}
           onChange={handleChange}
           fullWidth
@@ -196,8 +175,8 @@ const Register = () => {
             ),
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={handleToggleConfirmPassword}>
-                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                <IconButton onClick={handleTogglePassword}>
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
             ),
@@ -205,9 +184,21 @@ const Register = () => {
         />
 
         <TextField
-          label="Poste de Travail"
-          name="jobTitle"
-          value={formData.jobTitle}
+          label="Description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          multiline
+          rows={3}
+        />
+
+        <TextField
+          label="Adresse"
+          name="address"
+          value={formData.address}
           onChange={handleChange}
           fullWidth
           variant="outlined"
@@ -215,7 +206,41 @@ const Register = () => {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Work color="primary" />
+                <LocationOn color="primary" />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <TextField
+          label="Site Web"
+          name="siteWeb"
+          value={formData.siteWeb}
+          onChange={handleChange}
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Public color="primary" />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <TextField
+          label="Code Postal"
+          name="CodePostal"
+          value={formData.CodePostal}
+          onChange={handleChange}
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <PostAdd color="primary" />
               </InputAdornment>
             ),
           }}
@@ -240,7 +265,7 @@ const Register = () => {
       <Box textAlign="center" mt={3}>
         <Typography variant="body2" color="textSecondary">
           Vous avez déjà un compte ?{' '}
-          <Link to="/login">
+          <Link to="/loginEnt">
             <Button color="inherit" sx={{ textTransform: 'none', color: '#499ce6' }}>
               Connectez-vous
             </Button>
@@ -251,4 +276,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterEntreprise;

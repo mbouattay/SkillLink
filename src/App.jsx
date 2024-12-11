@@ -20,6 +20,7 @@ import ModifierOffer from './pages/modifierOffer/modifierOffer.jsx'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import LoginEntreprise from './pages/loginEntreprise/loginEntreprise.jsx'
+import RegisterEntreprise from './pages/registerEntreprise/registerEntreprise.jsx'
 const ScrollToTop = ({ children }) => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -44,13 +45,14 @@ function App() {
           <Route path='/login' element={<Login/>}/>
           <Route path='/loginEnt' element={<LoginEntreprise/>}/>
           <Route path='/register' element={<Register/>}/>
+          <Route path='/registerEnt' element={<RegisterEntreprise/>}/>
           <Route path='/home' element={<EntrepriseHome/>}/>
           <Route path='/ajouterOffer' element={<AjouterOffre/>}/>
           <Route path='/ajouterQuizz/:idOffer' element={<AjouteQuizz/>}/>
           <Route path='/listeCondidatures' element={<CondidateurEntreprise/>}/>
           <Route path='/rechercheProfile' element={<RechercheProfile/>} />
           <Route path='/listOfferEmplois' element={<ListeOfferEmplois/>} />
-          <Route path='/modifierOffre/:id' element={<ModifierOffer/>} /> 
+          <Route path='/modifierOffre/:id' element={<ModifierOffer/>} />  
         </Routes>
       </ScrollToTop>
       <ToastContainer/>
