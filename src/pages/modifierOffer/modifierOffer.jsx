@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Box,
     TextField,
@@ -18,11 +17,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { ModifierOfferApi } from "../../service/modifierOffer";
+import { getOfferById } from "../../service/getOfferById";
 
 const ModifierOffer = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { id } = useParams();
-    const {entreprise} = useSelector((state) => state.loginEntreprise);
+    const { entreprise } = useSelector((state) => state.loginEntreprise);
     const [offerDetails, setOfferDetails] = useState({
         title: "",
         contractType: "",
@@ -31,16 +31,9 @@ const ModifierOffer = () => {
         description: "",
         missions: "",
         requirements: "",
-        skills:[],
+        skills: [],
     });
-    const skillsList = [
-        "HTML",
-        "CSS",
-        "JS",
-        "GITHUB",
-        "REACT",
-        "ANGULAR",
-    ];
+    const skillsList = ["HTML", "CSS", "JS", "GITHUB", "REACT", "ANGULAR"];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -56,28 +49,39 @@ const ModifierOffer = () => {
 
     const handleSubmit = () => {
         const data = {
-            "description": offerDetails.description,
-             "titre": offerDetails.title,
-             "experience": offerDetails.experience,
-             "Contract": offerDetails.contractType,
-             "lieu": offerDetails.region,
-             "exigence": offerDetails.requirements,
-             "mession": offerDetails.missions,
-             "motCle": offerDetails.skills 
-        }
-        console.log(data) 
-       ModifierOfferApi(id,data,entreprise.token).then((response)=>{
+            description: offerDetails.description,
+            titre: offerDetails.title,
+            experience: offerDetails.experience,
+            Contract: offerDetails.contractType,
+            lieu: offerDetails.region,
+            exigence: offerDetails.requirements,
+            mession: offerDetails.missions,
+            motCle: offerDetails.skills,
+        };
 
-            console.log(response)
-           if(response.status==200){
-                toast.success("Votre offre bien modifier ", { autoClose: 1000 });
-                navigate("/listOfferEmplois")
+        ModifierOfferApi(id, data, entreprise.token).then((response) => {
+            if (response.status === 200) {
+                toast.success("Votre offre a été modifiée avec succès", { autoClose: 1000 });
+                navigate("/listOfferEmplois");
             }
-        })
-       
-       
-       
+        });
     };
+
+    useEffect(() => {
+        getOfferById(entreprise.token, id).then((response) => {
+            const fetchedOffer = response.data.resault;
+            setOfferDetails({
+                title: fetchedOffer.titre || "",
+                contractType: fetchedOffer.Contract || "",
+                experience: fetchedOffer.experience || "",
+                region: fetchedOffer.lieu || "",
+                description: fetchedOffer.description || "",
+                missions: fetchedOffer.mession || "",
+                requirements: fetchedOffer.exigence || "",
+                skills: fetchedOffer.motCle || [],
+            });
+        });
+    }, [entreprise.token, id]);
 
     return (
         <div>
@@ -92,7 +96,6 @@ const ModifierOffer = () => {
                     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
                 }}
             >
-
                 <Typography
                     variant="h4"
                     sx={{
@@ -105,9 +108,7 @@ const ModifierOffer = () => {
                     Modifier Offre d’Emploi
                 </Typography>
 
-
                 <form>
-
                     <TextField
                         label="Titre de l'Offre"
                         name="title"
@@ -117,7 +118,6 @@ const ModifierOffer = () => {
                         onChange={handleChange}
                         sx={{ marginBottom: "20px" }}
                     />
-
 
                     <FormControl fullWidth sx={{ marginBottom: "20px" }}>
                         <InputLabel>Type de Contrat</InputLabel>
@@ -146,7 +146,6 @@ const ModifierOffer = () => {
                         </Select>
                     </FormControl>
 
-
                     <TextField
                         label="Région"
                         name="region"
@@ -156,7 +155,6 @@ const ModifierOffer = () => {
                         onChange={handleChange}
                         sx={{ marginBottom: "20px" }}
                     />
-
 
                     <TextField
                         label="Description du Poste"
@@ -170,7 +168,6 @@ const ModifierOffer = () => {
                         sx={{ marginBottom: "20px" }}
                     />
 
-
                     <TextField
                         label="Vos Missions"
                         name="missions"
@@ -183,7 +180,6 @@ const ModifierOffer = () => {
                         sx={{ marginBottom: "20px" }}
                     />
 
-
                     <TextField
                         label="Exigences du Poste"
                         name="requirements"
@@ -195,6 +191,7 @@ const ModifierOffer = () => {
                         onChange={handleChange}
                         sx={{ marginBottom: "20px" }}
                     />
+
                     <Typography
                         variant="h6"
                         sx={{ marginBottom: "10px", color: "#333", fontWeight: "500" }}
@@ -229,14 +226,12 @@ const ModifierOffer = () => {
                             fontWeight: "bold",
                         }}
                     >
-                       Modifier Offer
+                        Modifier Offre
                     </Button>
                 </form>
             </Box>
         </div>
-
     );
 };
 
 export default ModifierOffer;
-
