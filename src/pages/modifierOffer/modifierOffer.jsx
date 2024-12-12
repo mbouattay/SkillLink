@@ -65,7 +65,9 @@ const ModifierOffer = () => {
              "mession": offerDetails.missions,
              "motCle": offerDetails.skills 
         }
-        ModifierOfferApi(id,data,entreprise.token).then((response)=>{
+        console.log(data) 
+       ModifierOfferApi(id,data,entreprise.token).then((response)=>{
+
             console.log(response)
            if(response.status==200){
                 toast.success("Votre offre bien modifier ", { autoClose: 1000 });

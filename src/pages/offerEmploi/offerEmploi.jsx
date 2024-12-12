@@ -28,8 +28,8 @@ const OfferEmploi = () => {
                                 variant="h6" 
                                 color="textSecondary" 
                                 mt={2} 
-                                fontWeight="bold" // Making the text bold
-                                textAlign="center" // Centering the text
+                                fontWeight="bold" 
+                                textAlign="center" 
                             >
                                 No offers available at the moment.
                             </Typography>

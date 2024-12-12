@@ -7,6 +7,7 @@ import {
     Typography,
     InputAdornment,
     IconButton,
+    Grid,
 } from '@mui/material';
 import { Email, Lock, Visibility, VisibilityOff, Business } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
@@ -164,6 +165,26 @@ const LoginEntreprise = () => {
                     </Button>
                 </Link>
             </Box>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={12} sm={12}>
+                    <Link to="/login">
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            sx={{
+                                textTransform: 'none',
+                                bgcolor: '#333333',
+                                color: 'white',
+                                '&:hover': {
+                                    bgcolor: '#555555',
+                                },
+                            }}
+                        >
+                            Espace Employer
+                        </Button>
+                    </Link>
+                </Grid>
+            </Grid>
         </Container>
     );
 };

@@ -57,10 +57,10 @@ const RegisterEntreprise = () => {
       nom: formData.nom,
       description: formData.description,
       address: formData.address,
-      siteWeb: formData.siteWeb,
+      siteW: formData.siteWeb,
       CodePostal: formData.CodePostal,
     };
-
+    
     registerEntreprise(data)
       .then((response) => {
         if (response.success === true) {

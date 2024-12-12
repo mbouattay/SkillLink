@@ -55,6 +55,7 @@ const EmploiDescription = () => {
             setDataOffer(response.data.resault)
         })
     }, []);
+    console.log(dataOffer)
     return (
         <div className='emploiDescriptionContainer'>
             <ModelCompetencesInsufison open={open} handleClose={handleClose} />

@@ -29,6 +29,7 @@ const BoxEmploi = (props) => {
         console.log(data)
 
         VerifierCompetence(data).then((response)=>{
+          
             if(response.success==false){
               toast.error("compétences actuelles ne correspondent pas aux exigences de cette offre d'emploi", { autoClose: 1000 });
             }else{

@@ -32,12 +32,14 @@ const ListeOfferEmplois = () => {
     const [ref, setref] = useState(0);
     const navigate = useNavigate();
     const { entreprise } = useSelector((state) => state.loginEntreprise);
+   
 
     const handleDeleteOffer = () => {
         const data = { id: IDofferToDelete };
         SupprimerOffer(data, entreprise.token).then(() => {
             setOpenDeleteDialog(false);
         });
+        setOpenDeleteDialog(false)
         setref(ref + 1);
     };
 
@@ -49,7 +51,7 @@ const ListeOfferEmplois = () => {
        
         const data = {OfferId:id };
         ChangeStatus(data,entreprise.token).then(() => {
-            setref(ref + 1); // Re-fetch the data
+            setref(ref + 1); 
         });
     };
 
